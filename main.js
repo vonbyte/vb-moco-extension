@@ -13,20 +13,31 @@ function handleDashboard (firstWidgetTitleElement) {
 
 
 const routes = {
-  '/profile/performance': {
-    'action': handleOvertime,
-    'elementSelector': '.tst-hours-tracked-total-with-adjustments'
+  '^/profile/performance': {
+    action: handleOvertime,
+    elementSelector: '.tst-hours-tracked-total-with-adjustments'
   },
-  '/profile/report': {
-    'action': handleDashboard,
-    'elementSelector': '.tst-widget-title'
+  '^/users/[^/]+/performance': {
+    action: handleOvertime,
+    elementSelector: '.tst-hours-tracked-total-with-adjustments'
+  },
+  '^/profile/report': {
+    action: handleDashboard,
+    elementSelector: '.tst-widget-title'
   },
 };
 
 function initExtension () {
   const path = window.location.pathname;
-  if (routes[path]) {
-    observeMocoContent(routes[path]['elementSelector'], routes[path]['action']);
+
+  const matchingRoute = Object.entries(routes).find(([pattern]) => {
+    const routeRegexPattern = new RegExp(pattern);
+    return routeRegexPattern.test(path);
+  });
+
+  if (matchingRoute) {
+    const [, { elementSelector, action }] = matchingRoute;
+    observeMocoContent(elementSelector, action);
   }
 }
 

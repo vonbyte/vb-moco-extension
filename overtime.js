@@ -1,27 +1,61 @@
-const getOvertimeValue = (workingTimeSelector, overtimeSelector) => {
-
-  const workingTimeElement = document.getElementById(workingTimeSelector);
-  if (!workingTimeElement) {
-    console.warn('No working time element found.');
-    return null;
+class OvertimeAdjuster {
+  constructor (workingTimeContainer, overtimeSelector, compensationContainerSelector) {
+    this.workingTimeContainer = workingTimeContainer;
+    this.overtimeSelector = overtimeSelector;
+    this.compensationContainerSelector = compensationContainerSelector;
   }
 
-  const overtimeContainer = workingTimeElement.parentElement.querySelector('div + div');
-  if (!overtimeContainer) {
-    console.warn('No overtime container found.');
-    return null;
+  _getOvertime () {
+    this.overtimeElementParent = this.workingTimeContainer.parentElement.parentElement.querySelector('div + div');
+    if (!this.overtimeElementParent) {
+      console.warn('No overtime element found.');
+      return;
+    }
+    this.overtimeElement = this.overtimeElementParent.querySelector(this.overtimeSelector);
+    if (!this.overtimeElement) {
+      console.warn('No overtime value element found.');
+      return;
+    }
+
+    return parseFloat(this.overtimeElement.innerText);
   }
 
-  const overtimeElement = overtimeContainer.querySelector(overtimeSelector);
-  if (!overtimeValue) {
-    console.warn('No overtime value element found.');
+  _getCompensationAbsences () {
+    const overtimeCompensations = document.querySelectorAll(this.compensationContainerSelector);
+    const currentDate = new Date();
+
+    return Array.from(overtimeCompensations).filter((compensation) => {
+      const compensationWrapper = compensation.parentElement.parentElement;
+      const compensationId = compensationWrapper.getAttribute('id');
+      const [year, day, month] = compensationId.split('-').map(Number);
+      const compensationDate = new Date(year, month - 1, day)
+      return currentDate < compensationDate;
+    });
+
   }
 
-  const overtimeValue = parseFloat(overtimeElement.innerText);
+  apply () {
+    const overtime = this._getOvertime();
+    const futureCompensations = this._getCompensationAbsences();
+    const futureCompensationHours = this._getFutureCompensationHours(futureCompensations);
+    const correctedOvertime = overtime - futureCompensationHours;
+    const signedOvertime = correctedOvertime > 0 ? `+${correctedOvertime.toFixed(2)}` : `${correctedOvertime.toFixed(2)}`;
 
-  console.info(overtimeValue);
-  return overtimeValue;
+    const displayElement = document.createElement('div');
+    displayElement.style.color = correctedOvertime > 0 ? 'green' : 'red';
+    displayElement.textContent = `Angepasst: ${signedOvertime}`;
+    this.overtimeElementParent.parentElement.insertBefore(displayElement, this.overtimeElementParent.parentElement.lastChild);
 
+
+  }
+
+  _getFutureCompensationHours (compensations) {
+    return compensations.reduce((sum, compensation) => {
+      const currentValue = parseFloat(compensation.firstChild.innerText) || 0;
+      return sum + currentValue;
+    }, 0);
+  }
 }
 
-export { getOvertimeValue };
+window.OvertimeAdjuster = OvertimeAdjuster;
+

@@ -1,30 +1,54 @@
-import {getOvertimeValue} from './modules/overtimeCalculator';
+function handleOvertime (workingTimeContainer) {
+  console.log('Handling overtime');
+  const overtimeValueSelector = '.number-positive, .number-default';
+  const compensationContainerSelector = '.unplannable-background';
 
-function init (overtimeElement) {
-  console.log('Application loaded');
-  const overtimeValueSelector = '.number-positive-signed, number-negative-signed ';
-
-  // get overtime value
-  const overtimeValue = getOvertimeValue(overtimeElement, overtimeValueSelector);
-  console.log(overtimeValue);
-  // get absences
-  // calculate correct overtime
-  // display in interface
+  const overtimeAdjuster = new OvertimeAdjuster(workingTimeContainer, overtimeValueSelector, compensationContainerSelector);
+  overtimeAdjuster.apply();
 }
 
-function observeMocoContent () {
-  const workingTimeSelector = '.tst-user-performance';
+function handleDashboard (firstWidgetTitleElement) {
+  console.log('Handling dashboard');
+}
 
+
+const routes = {
+  '/profile/performance': {
+    'action': handleOvertime,
+    'elementSelector': '.tst-hours-tracked-total-with-adjustments'
+  },
+  '/profile/report': {
+    'action': handleDashboard,
+    'elementSelector': '.tst-widget-title'
+  },
+};
+
+function initExtension () {
+  const path = window.location.pathname;
+  if (routes[path]) {
+    observeMocoContent(routes[path]['elementSelector'], routes[path]['action']);
+  }
+}
+
+function observeMocoContent (elementSelector, callback) {
   const interval = setInterval(() => {
-    const workingTimeElement = document.querySelector(workingTimeSelector);
-    console.log(workingTimeElement);
-    if (workingTimeElement) {
-
+    const keyElement = document.querySelector(elementSelector);
+    if (keyElement) {
       clearInterval(interval);
-      init(workingTimeElement);
+      callback(keyElement);
     }
   }, 500);
 }
 
-observeMocoContent();
+let lastUrl = location.href;
+const observer = new MutationObserver(() => {
+  if (location.href !== lastUrl) {
+    lastUrl = location.href;
+    initExtension();
+  }
+});
+
+observer.observe(document.body, { subtree: true, childList: true });
+initExtension()
+
 

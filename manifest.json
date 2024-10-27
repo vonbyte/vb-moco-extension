@@ -1,12 +1,19 @@
 {
   "manifest_version": 3,
   "name": "Moco - Vonbyte Adjustments",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "permissions": [],
   "content_scripts": [
     {
       "matches": ["https://*.mocoapp.com/*"],
       "js": ["main.js","overtime.js"]
     }
-  ]
+  ],
+  "icons": {
+    "16": "icons/vbExtensionIcon16.png",
+    "32": "icons/vbExtensionIcon32.png",
+    "48": "icons/vbExtensionIcon48.png",
+    "128": "icons/vbExtensionIcon128.png",
+    "256": "icons/vbExtensionIcon256.png"
+  }
 }

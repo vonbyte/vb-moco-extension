@@ -1,27 +1,31 @@
-const getOvertimeValue = (workingTimeSelector, overtimeSelector) => {
-
-  const workingTimeElement = document.getElementById(workingTimeSelector);
-  if (!workingTimeElement) {
-    console.warn('No working time element found.');
-    return null;
+class OvertimeAdjuster {
+  constructor (workingTimeContainer, overtimeSelector) {
+    this.workingTimeContainer = workingTimeContainer;
+    this.overtimeSelector = overtimeSelector;
   }
 
-  const overtimeContainer = workingTimeElement.parentElement.querySelector('div + div');
-  if (!overtimeContainer) {
-    console.warn('No overtime container found.');
-    return null;
+  _getOvertime () {
+    const overtimeElementParent = this.workingTimeContainer.parentElement.parentElement.querySelector('div + div');
+    if (!overtimeElementParent) {
+      console.warn('No overtime element found.');
+      return;
+    }
+    const overtimeElement = overtimeElementParent.querySelector(this.overtimeSelector);
+    if (!overtimeElement) {
+      console.warn('No overtime value element found.');
+      return;
+    }
+
+    const overtimeValue = parseFloat(overtimeElement.innerText);
+    console.info(overtimeValue);
+    return overtimeValue;
   }
 
-  const overtimeElement = overtimeContainer.querySelector(overtimeSelector);
-  if (!overtimeValue) {
-    console.warn('No overtime value element found.');
+  apply () {
+    const overtime = this._getOvertime();
+    console.info(overtime);
   }
-
-  const overtimeValue = parseFloat(overtimeElement.innerText);
-
-  console.info(overtimeValue);
-  return overtimeValue;
-
 }
 
-export { getOvertimeValue };
+window.OvertimeAdjuster = OvertimeAdjuster;
+

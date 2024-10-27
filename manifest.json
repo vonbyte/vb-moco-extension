@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Moco - Vonbyte Adjustments",
+  "version": "0.1.0",
+  "permissions": [],
+  "content_scripts": [
+    {
+      "matches": ["https://*.mocoapp.com/*"],
+      "js": ["main.js","overtime.js"]
+    }
+  ]
+}

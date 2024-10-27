@@ -1,19 +1,13 @@
-import {getOvertimeValue} from './modules/overtimeCalculator';
+function initOvertime (workingTimeContainer) {
+  console.log('Overtime loaded');
+  const overtimeValueSelector = '.number-positive-signed, .number-negative-signed';
 
-function init (overtimeElement) {
-  console.log('Application loaded');
-  const overtimeValueSelector = '.number-positive-signed, number-negative-signed ';
-
-  // get overtime value
-  const overtimeValue = getOvertimeValue(overtimeElement, overtimeValueSelector);
-  console.log(overtimeValue);
-  // get absences
-  // calculate correct overtime
-  // display in interface
+  const overtimeAdjuster = new OvertimeAdjuster(workingTimeContainer, overtimeValueSelector);
+  overtimeAdjuster.apply();
 }
 
 function observeMocoContent () {
-  const workingTimeSelector = '.tst-user-performance';
+  const workingTimeSelector = '.tst-hours-tracked-total-with-adjustments';
 
   const interval = setInterval(() => {
     const workingTimeElement = document.querySelector(workingTimeSelector);
@@ -21,7 +15,7 @@ function observeMocoContent () {
     if (workingTimeElement) {
 
       clearInterval(interval);
-      init(workingTimeElement);
+      initOvertime(workingTimeElement);
     }
   }, 500);
 }

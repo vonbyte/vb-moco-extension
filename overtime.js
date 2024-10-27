@@ -29,7 +29,6 @@ class OvertimeAdjuster {
       const compensationId = compensationWrapper.getAttribute('id');
       const [year, day, month] = compensationId.split('-').map(Number);
       const compensationDate = new Date(year, month - 1, day)
-      console.log(currentDate,compensationDate)
       return currentDate < compensationDate;
     });
 
@@ -37,11 +36,8 @@ class OvertimeAdjuster {
 
   apply () {
     const overtime = this._getOvertime();
-    console.log(overtime);
     const futureCompensations = this._getCompensationAbsences();
-    console.log(futureCompensations);
     const futureCompensationHours = this._getFutureCompensationHours(futureCompensations);
-    console.log(futureCompensationHours);
     const correctedOvertime = overtime - futureCompensationHours;
     const signedOvertime = correctedOvertime > 0 ? `+${correctedOvertime.toFixed(2)}` : `${correctedOvertime.toFixed(2)}`;
 

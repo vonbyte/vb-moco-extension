@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [0.8.1] - 2024-10-29
+
+### Changed
+- Just bump the chrome plugin version as well.
 
 ## [0.8.0] - 2024-10-29
 

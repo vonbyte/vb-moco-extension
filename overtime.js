@@ -43,7 +43,7 @@ class OvertimeAdjuster {
 
     const displayElement = document.createElement('div');
     displayElement.style.color = correctedOvertime > 0 ? 'green' : 'red';
-    displayElement.textContent = `Angepasst: ${signedOvertime}`;
+    displayElement.textContent = `Angepasst: ${signedOvertime} h`;
     this.overtimeElementParent.parentElement.insertBefore(displayElement, this.overtimeElementParent.parentElement.lastChild);
 
 
